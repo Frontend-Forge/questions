@@ -1,0 +1,475 @@
+[
+  {
+    "initialVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <div>\n      <div>\n        <button class=\"html-button\">HTML</button>\n        <button class=\"css-button\">CSS</button>\n        <button class=\"js-button\">JavaScript</button>\n      </div>\n      <div>\n        <p class=\"result-text\"></p>\n      </div>\n    </div>\n  </body>\n</html>\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "// Write your JavaScript here."
+      }
+    ],
+    "initialReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "function App() {\n  return <Tabs />;\n}\n\n\nfunction Tabs() {\n\n  return (\n    <div>\n      <div>\n        <button>HTML</button>\n        <button>CSS</button>\n        <button>JavaScript</button>\n      </div>\n      <div>\n        <p>\n          The HyperText Markup Language or HTML is the\n          standard markup language for documents designed to\n          be displayed in a web browser.\n        </p>\n        <p>\n          Cascading Style Sheets is a style sheet language\n          used for describing the presentation of a document\n          written in a markup language such as HTML or XML.\n        </p>\n        <p>\n          JavaScript, often abbreviated as JS, is a\n          programming language that is one of the core\n          technologies of the World Wide Web, alongside HTML\n          and CSS.\n        </p>\n      </div>\n    </div>\n  );\n}\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      }
+    ],
+    "solutionVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <div id=\"tabs\"></div>\n    <script src=\"src/index.js\"></script>\n  </body>\n</html>\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n\n.wrapper {\n  align-items: center;\n  display: flex;\n}\n\n.tabs {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.tabs-list {\n  display: flex;\n  gap: 6px;\n}\n\n.tabs-list-item {\n  --active-color: blueviolet;\n\n  background: none;\n  border: 1px solid #000;\n  border-radius: 4px;\n  cursor: pointer;\n  padding: 6px 10px;\n}\n\n.tabs-list-item:hover {\n  border-color: var(--active-color);\n  color: var(--active-color);\n}\n\n.tabs-list-item--active,\n.tabs-list-item--active:hover {\n  border-color: var(--active-color);\n  background-color: var(--active-color);\n  color: #fff;\n}\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "(() => {\n  function tabs(\n    $rootEl,\n    { defaultValue, items: itemsParam },\n  ) {\n    const DOM = {\n      $tabBar: document.createElement('div'),\n      $tabpanels: document.createElement('div'),\n    };\n\n    const items = itemsParam;\n    const state = {\n      value: defaultValue || items[0].value,\n    };\n\n    function update() {\n      const $tabsFragment =\n        document.createDocumentFragment();\n      items.forEach(({ label, value: itemValue }) => {\n        const $tabEl = document.createElement('button');\n        const isTabActive = itemValue === state.value;\n\n        $tabEl.textContent = label;\n        $tabEl.type = 'button';\n        $tabEl.setAttribute('data-value', itemValue);\n        $tabEl.classList.add('tabs-list-item');\n\n        if (isTabActive) {\n          $tabEl.classList.add('tabs-list-item--active');\n        }\n\n        $tabsFragment.appendChild($tabEl);\n      });\n\n      DOM.$tabBar.innerHTML = '';\n      DOM.$tabBar.appendChild($tabsFragment);\n\n      const $tabpanelsFragment =\n        document.createDocumentFragment();\n      items.forEach(({ panel, value: itemValue }) => {\n        const isTabActive = itemValue === state.value;\n\n        const $tabpanelEl = document.createElement('div');\n        $tabpanelEl.textContent = panel;\n        $tabpanelEl.hidden = !isTabActive;\n\n        $tabpanelsFragment.appendChild($tabpanelEl);\n      });\n\n      DOM.$tabpanels.innerHTML = '';\n      DOM.$tabpanels.appendChild($tabpanelsFragment);\n    }\n\n    function attachEvents() {\n      // Use Event Delegation.\n      DOM.$tabBar.addEventListener('click', (event) => {\n        if (event.target.tagName !== 'BUTTON') {\n          return;\n        }\n\n        state.value =\n          event.target.getAttribute('data-value');\n        update();\n      });\n    }\n\n    function init() {\n      $rootEl.classList.add('tabs');\n\n      DOM.$tabBar.className = 'tabs-list';\n      $rootEl.appendChild(DOM.$tabBar);\n\n      $rootEl.appendChild(DOM.$tabpanels);\n    }\n\n    init();\n    update();\n    attachEvents();\n  }\n\n  tabs(document.getElementById('tabs'), {\n    items: [\n      {\n        value: 'html',\n        label: 'HTML',\n        panel:\n          'The HyperText Markup Language or HTML is the standard markup language for documents designed to be displayed in a web browser.',\n      },\n      {\n        value: 'css',\n        label: 'CSS',\n        panel:\n          'Cascading Style Sheets is a style sheet language used for describing the presentation of a document written in a markup language such as HTML or XML.',\n      },\n      {\n        value: 'javascript',\n        label: 'JavaScript',\n        panel:\n          'JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS.',\n      },\n    ],\n  });\n})();\n"
+      }
+    ],
+    "solutionReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "function App() {\n  return (\n    <div className=\"wrapper\">\n      <Tabs\n        items={[\n          {\n            value: 'html',\n            label: 'HTML',\n            panel:\n              'The HyperText Markup Language or HTML is the standard markup language for documents designed to be displayed in a web browser.',\n          },\n          {\n            value: 'css',\n            label: 'CSS',\n            panel:\n              'Cascading Style Sheets is a style sheet language used for describing the presentation of a document written in a markup language such as HTML or XML.',\n          },\n          {\n            value: 'javascript',\n            label: 'JavaScript',\n            panel:\n              'JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS.',\n          },\n        ]}\n      />\n    </div>\n  );\n}\n\nfunction Tabs({ defaultValue, items }) {\n  const [value, setValue] = useState(\n    defaultValue ?? items[0].value,\n  );\n\n  return (\n    <div className=\"tabs\">\n      <div className=\"tabs-list\">\n        {items.map(({ label, value: itemValue }) => {\n          const isActiveValue = itemValue === value;\n\n          return (\n            <button\n              key={itemValue}\n              type=\"button\"\n              className={[\n                'tabs-list-item',\n                isActiveValue && 'tabs-list-item--active',\n              ]\n                .filter(Boolean)\n                .join(' ')}\n              onClick={() => {\n                setValue(itemValue);\n              }}>\n              {label}\n            </button>\n          );\n        })}\n      </div>\n      <div>\n        {items.map(({ panel, value: itemValue }) => (\n          <div key={itemValue} hidden={itemValue !== value}>\n            {panel}\n          </div>\n        ))}\n      </div>\n    </div>\n  );\n}\n\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "\n      \n      body {\n  font-family: sans-serif;\n}\n\n.wrapper {\n  align-items: center;\n  display: flex;\n}\n\n.tabs {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n}\n\n.tabs-list {\n  display: flex;\n  gap: 6px;\n}\n\n.tabs-list-item {\n  --active-color: blueviolet;\n\n  background: none;\n  border: 1px solid #000;\n  border-radius: 4px;\n  cursor: pointer;\n  padding: 6px 10px;\n}\n\n.tabs-list-item:hover {\n  border-color: var(--active-color);\n  color: var(--active-color);\n}\n\n.tabs-list-item--active,\n.tabs-list-item--active:hover {\n  border-color: var(--active-color);\n  background-color: var(--active-color);\n  color: #fff;\n}\n\n      "
+      }
+    ],
+    "questionDetails": {
+      "name": "Tabs",
+      "questionaerInfo": {
+        "name": "YanghSun Tay",
+        "profilePic": "https://media.licdn.com/dms/image/v2/D5603AQFB72zuIqxYrQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1684230919345?e=1744848000&v=beta&t=k1XZNF3EGY4g8MbqRfgp6bGPxWYQdH5_9cRp73CWgu0",
+        "additionalInfo": "Ex-Meta Staff Engineer"
+      },
+      "techStack": ["html", "css", "js"],
+      "difficulty": "Medium",
+      "time": 15,
+      "questionDescription": "Build a tabs component that displays one panel of content at a\n      time depending on the active tab element. Some HTML is provided\n      for you as example contents.",
+      "requirements": [
+        "Clicking on a tab makes it the active tab. Add a visual\n                indication (e.g. using blue text color) for the active tab to\n                differentiate it from the non-active tabs.",
+        "At all times, only one panel's contents should be\n                displayed — the one corresponding to the active tab's."
+      ],
+      "notes": [
+        "The focus of this question is on functionality, not the\n                styling. There's no need to write any custom CSS except for\n                highlighting the active tab.",
+        "The focus of this question is on functionality, not the\n                styling. There's no need to write any custom CSS except for\n                highlighting the active tab.",
+        "You may want to think about ways to improve the user\n                experience of the application and implement them (you get bonus\n                credit for doing that during interviews"
+      ],
+      "companies": ["Google", "Apple", "Twitter", "Microsoft", "Facebook"],
+      "questionType": "ui"
+    }
+  },
+  {
+    "initialVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <!-- This is a warm up question to help\n    you get familiar with the editor. Most of the\n    code has been filled in for you.\n\n    Fix the bug in index.js to\n    complete this question -->\n    <button>Clicks: <span id=\"count\">0</span></button>\n    <script src=\"src/index.js\"></script>\n  </body>\n</html>\n\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "let count = 0;\nconst $countEl = document.querySelector('#count');\n\ndocument\n  .querySelector('button')\n  .addEventListener('click', () => {\n    // Fix the bug in the next line.\n    count = count - 1;\n    $countEl.textContent = count;\n  });"
+      }
+    ],
+    "initialReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "\n// This is a warm up question to help you\n// get familiar with the editor.\n// Most of the code has been filled in for you.\nfunction App() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <button\n        onClick={() => {\n          // Fix the bug in the next line\n          // to complete the question.\n          setCount(count - 1);\n        }}>\n        Clicks: {count}\n      </button>\n    </div>\n  );\n}\n\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      }
+    ],
+    "solutionVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <button>Clicks: <span id=\"count\">0</span></button>\n  </body>\n</html>\n\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "(() => {\n  let count = 0;\n  const $countEl = document.querySelector('#count');\n\n  document\n    .querySelector('button')\n    .addEventListener('click', () => {\n      count++;\n      $countEl.textContent = count;\n    });\n})();\n"
+      }
+    ],
+    "solutionReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "function App() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <button onClick={() => setCount(count + 1)}>\n        Clicks: {count}\n      </button>\n    </div>\n  );\n}\n\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      }
+    ],
+    "questionDetails": {
+      "name": "Counter",
+      "questionaerInfo": {
+        "name": "YanghSun Tay",
+        "profilePic": "https://media.licdn.com/dms/image/v2/D5603AQFB72zuIqxYrQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1684230919345?e=1744848000&v=beta&t=k1XZNF3EGY4g8MbqRfgp6bGPxWYQdH5_9cRp73CWgu0",
+        "additionalInfo": "Ex-Meta Staff Engineer"
+      },
+      "techStack": ["html", "js"],
+      "difficulty": "Easy",
+      "time": 5,
+      "questionDescription": "Built a counter button when clicked counter increaed by 1",
+      "requirements": [
+        "Make the text within the button display the number of times the button has been clicked."
+      ],
+      "notes": [
+        "Note: This is a short warm up question meant to help you familiarize with the coding workspace. Actual UI coding interview questions will be more complicated."
+      ],
+      "companies": [],
+      "questionType": "ui"
+    }
+  },
+  {
+    "initialVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <form>\n      <input type=\"text\" />\n    </form>\n    <!-- You can ignore this file, it is only used by GFE to\n      intercept the form submission event. -->\n    <script src=\"src/index.js\"></script>\n  </body>\n</html>\n\n\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "(() => {\n  const SUBMIT_URL =\n    'https://www.greatfrontend.com/api/questions/contact-form';\n\n  const $form = document.querySelector('form');\n  $form.addEventListener('submit', async (event) => {\n    event.preventDefault();\n\n    if ($form.action !== SUBMIT_URL) {\n      alert('Incorrect form action value');\n      return;\n    }\n\n    if ($form.method.toLowerCase() !== 'post') {\n      alert('Incorrect form method value');\n      return;\n    }\n\n    try {\n      const formData = new FormData($form);\n      const response = await fetch(SUBMIT_URL, {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n          name: formData.get('name'),\n          email: formData.get('email'),\n          message: formData.get('message'),\n        }),\n      });\n\n      const text = await response.text();\n      alert(text);\n    } catch (_) {\n      alert('Error submitting form!');\n    }\n  });\n})();\n"
+      }
+    ],
+    "initialReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "\nfunction App() {\n  return (\n    <form\n      // Ignore the onSubmit prop, it's used by GFE to\n      // intercept the form submit event to check your solution.\n      onSubmit={submitForm}>\n      <input type=\"text\" />\n    </form>\n  );\n}\n\nconst SUBMIT_URL =\n  'https://www.greatfrontend.com/api/questions/contact-form';\n\nasync function submitForm(event) {\n  event.preventDefault();\n  const form = event.target;\n\n  try {\n    if (form.action !== SUBMIT_URL) {\n      alert('Incorrect form action value');\n      return;\n    }\n\n    if (form.method.toLowerCase() !== 'post') {\n      alert('Incorrect form method value');\n      return;\n    }\n\n    const formData = new FormData(form);\n    const response = await fetch(SUBMIT_URL, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n        name: formData.get('name'),\n        email: formData.get('email'),\n        message: formData.get('message'),\n      }),\n    });\n\n    const text = await response.text();\n    alert(text);\n  } catch (_) {\n    alert('Error submitting form!');\n  }\n}\n\n\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      }
+    ],
+    "solutionVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <form\n      action=\"https://www.greatfrontend.com/api/questions/contact-form\"\n      method=\"post\">\n      <div>\n        <label for=\"name-input\">Name</label>\n        <input id=\"name-input\" name=\"name\" type=\"text\" />\n      </div>\n      <div>\n        <label for=\"email-input\">Email</label>\n        <input id=\"email-input\" name=\"email\" type=\"email\" />\n      </div>\n      <div>\n        <label for=\"message-input\">Message</label>\n        <textarea\n          id=\"message-input\"\n          name=\"message\"></textarea>\n      </div>\n      <div>\n        <button>Send</button>\n      </div>\n    </form>\n  </body>\n</html>\n\n\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n\nform {\n  display: flex;\n  flex-direction: column;\n  row-gap: 12px;\n}\n\nlabel {\n  font-size: 12px;\n}\n\ninput,\ntextarea {\n  display: block;\n}\n\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "\n(() => {\n  const SUBMIT_URL =\n    'https://www.greatfrontend.com/api/questions/contact-form';\n\n  const $form = document.querySelector('form');\n  $form.addEventListener('submit', async (event) => {\n    event.preventDefault();\n\n    if ($form.action !== SUBMIT_URL) {\n      alert('Incorrect form action value');\n      return;\n    }\n\n    if ($form.method.toLowerCase() !== 'post') {\n      alert('Incorrect form method value');\n      return;\n    }\n\n    try {\n      const formData = new FormData($form);\n      const response = await fetch(SUBMIT_URL, {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({\n          name: formData.get('name'),\n          email: formData.get('email'),\n          message: formData.get('message'),\n        }),\n      });\n\n      const text = await response.text();\n      alert(text);\n    } catch (_) {\n      alert('Error submitting form!');\n    }\n  });\n})();\n\n"
+      }
+    ],
+    "solutionReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "function App() {\n  return (\n    <form\n      // Ignore the onSubmit prop, it's used by GFE to\n      // intercept the form submit event to check your solution.\n      onSubmit={submitForm}\n      action=\"https://www.greatfrontend.com/api/questions/contact-form\"\n      method=\"post\">\n      <div>\n        <label htmlFor=\"name-input\">Name</label>\n        <input id=\"name-input\" name=\"name\" type=\"text\" />\n      </div>\n      <div>\n        <label htmlFor=\"email-input\">Email</label>\n        <input id=\"email-input\" name=\"email\" type=\"email\" />\n      </div>\n      <div>\n        <label htmlFor=\"message-input\">Message</label>\n        <textarea\n          id=\"message-input\"\n          name=\"message\"></textarea>\n      </div>\n      <div>\n        <button>Send</button>\n      </div>\n    </form>\n  );\n}\n\nconst SUBMIT_URL =\n  'https://www.greatfrontend.com/api/questions/contact-form';\n\nasync function submitForm(event) {\n  event.preventDefault();\n  const form = event.target;\n\n  try {\n    if (form.action !== SUBMIT_URL) {\n      alert('Incorrect form action value');\n      return;\n    }\n\n    if (form.method.toLowerCase() !== 'post') {\n      alert('Incorrect form method value');\n      return;\n    }\n\n    const formData = new FormData(form);\n    const response = await fetch(SUBMIT_URL, {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n      },\n      body: JSON.stringify({\n        name: formData.get('name'),\n        email: formData.get('email'),\n        message: formData.get('message'),\n      }),\n    });\n\n    const text = await response.text();\n    alert(text);\n  } catch (_) {\n    alert('Error submitting form!');\n  }\n}\n\n\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n\nform {\n  display: flex;\n  flex-direction: column;\n  row-gap: 12px;\n}\n\nlabel {\n  font-size: 12px;\n}\n\ninput,\ntextarea {\n  display: block;\n}\n\n"
+      }
+    ],
+    "questionDetails": {
+      "name": "Contact Form",
+      "questionaerInfo": {
+        "name": "YanghSun Tay",
+        "profilePic": "https://media.licdn.com/dms/image/v2/D5603AQFB72zuIqxYrQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1684230919345?e=1744848000&v=beta&t=k1XZNF3EGY4g8MbqRfgp6bGPxWYQdH5_9cRp73CWgu0",
+        "additionalInfo": "Ex-Meta Staff Engineer"
+      },
+      "techStack": ["html", "js"],
+      "difficulty": "Easy",
+      "time": 15,
+      "questionDescription": "Building forms is a common task in Front End. In this exercise, we will build a basic \"Contact Us\" form, commonly seen on marketing websites for visitors to ask questions or provide feedback.",
+      "requirements": [
+        "The form should contain the following elements:\nName field,\nEmail field,\nMessage field, (Since the message can be long, a <textarea> will be more suitable.),\nSubmit button,\nContains the text \"Send\",\nClicking on the submit button submits the form.",
+        "The form and submission should be implemented entirely in HTML. Do not use any JavaScript or framework-specific features for this question.",
+        "There is no need to do any client-side validation on the fields. Validation will be done on the server side."
+      ],
+      "notes": [
+        "You do not need JavaScript for this question, the focus is on HTML form validation and submission."
+      ],
+      "companies": ["Apple", "Microsoft"],
+      "questionType": "ui"
+    }
+  },
+  {
+    "initialVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <div>\n      <h1>Todo List</h1>\n      <div>\n        <input type=\"text\" placeholder=\"Add your task\" />\n        <div>\n          <button>Submit</button>\n        </div>\n      </div>\n      <ul>\n        <li>\n          <span>Walk the dog</span>\n          <button>Delete</button>\n        </li>\n        <li>\n          <span>Water the plants</span>\n          <button>Delete</button>\n        </li>\n        <li>\n          <span>Wash the dishes</span>\n          <button>Delete</button>\n        </li>\n      </ul>\n    </div>\n  </body>\n</html>\n\n\n\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "// Write your JavaScript here.\n\n"
+      }
+    ],
+    "initialReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "\nfunction App() {\n  return (\n    <div>\n      <h1>Todo List</h1>\n      <div>\n        <input type=\"text\" placeholder=\"Add your task\" />\n        <div>\n          <button>Submit</button>\n        </div>\n      </div>\n      <ul>\n        <li>\n          <span>Walk the dog</span>\n          <button>Delete</button>\n        </li>\n        <li>\n          <span>Water the plants</span>\n          <button>Delete</button>\n        </li>\n        <li>\n          <span>Wash the dishes</span>\n          <button>Delete</button>\n        </li>\n      </ul>\n    </div>\n  );\n}\n\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      }
+    ],
+    "solutionVanillaFiles": [
+      {
+        "name": "index.html",
+        "language": "html",
+        "content": "<!doctype html>\n<html>\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0\" />\n  </head>\n  <body>\n    <div>\n      <h1>Todo List</h1>\n      <div>\n        <input\n          aria-label=\"Add new task\"\n          type=\"text\"\n          placeholder=\"Add your task\" />\n        <div>\n          <button id=\"submit\">Submit</button>\n        </div>\n      </div>\n      <ul>\n        <li>\n          <span>Walk the dog</span>\n          <button>Delete</button>\n        </li>\n        <li>\n          <span>Water the plants</span>\n          <button>Delete</button>\n        </li>\n        <li>\n          <span>Wash the dishes</span>\n          <button>Delete</button>\n        </li>\n      </ul>\n    </div>\n    <script src=\"src/index.js\"></script>\n  </body>\n</html>\n\n\n\n"
+      },
+      {
+        "name": "style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n"
+      },
+      {
+        "name": "index.js",
+        "language": "javascript",
+        "content": "\n(() => {\n  // Retain a reference to the elements which persist\n  // throughout usage of the app.\n  const $inputEl = document.querySelector('input');\n  const $submitButtonEl = document.querySelector('#submit');\n  const $todoListEl = document.querySelector('ul');\n\n  function addTask(label) {\n    // Create the DOM elements for the new task.\n    const $newTaskElement = document.createElement('li');\n\n    const $span = document.createElement('span');\n    $newTaskElement.appendChild($span);\n    // Using Node.textContent here instead of Element.innerHTML\n    // to prevent XSS (Cross Site Scripting).\n    $span.textContent = label;\n\n    const $btn = document.createElement('button');\n    $btn.textContent = 'Delete';\n    $newTaskElement.appendChild($btn);\n\n    // Add the new task to the list.\n    $todoListEl.append($newTaskElement);\n  }\n\n  function deleteTask($itemEl) {\n    // Remove the task from the list.\n    $itemEl.parentNode.removeChild($itemEl);\n  }\n\n  $submitButtonEl.addEventListener('click', () => {\n    addTask($inputEl.value);\n    // Reset the input so that new tasks can be added.\n    $inputEl.value = '';\n  });\n\n  // Add a listener to the list instead of individual tasks.\n  // This is called event delegation and the benefit is that\n  // the Delete button of newly-added tasks will also respond\n  // to clicks without you having to manually add event listeners\n  // to them. You also don't have to remove any event listeners\n  // when the task is removed.\n  $todoListEl.addEventListener('click', (event) => {\n    // Check that the button is being clicked and not something\n    // else (e.g. the task label).\n    if (event.target.tagName === 'BUTTON') {\n      deleteTask(event.target.parentNode);\n    }\n  });\n})();\n\n\n"
+      }
+    ],
+    "solutionReactFiles": [
+      {
+        "name": "public/index.html",
+        "language": "html",
+        "content": "<!DOCTYPE html>\n  <html>\n  <head>\n    <title>React App</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n  </body>\n  </html>"
+      },
+      {
+        "name": "src/App.js",
+        "language": "javascript",
+        "content": "let id = 0;\n\nconst INITIAL_TASKS = [\n  { id: id++, label: 'Walk the dog' },\n  { id: id++, label: 'Water the plants' },\n  { id: id++, label: 'Wash the dishes' },\n];\n\nfunction App() {\n  const [tasks, setTasks] = useState(INITIAL_TASKS);\n  const [newTask, setNewTask] = useState('');\n\n  return (\n    <div>\n      <h1>Todo List</h1>\n      <div>\n        <input\n          aria-label=\"Add new task\"\n          type=\"text\"\n          placeholder=\"Add your task\"\n          value={newTask}\n          onChange={(event) => {\n            setNewTask(event.target.value);\n          }}\n        />\n        <div>\n          <button\n            onClick={() => {\n              setTasks(\n                tasks.concat({\n                  id: id++,\n                  label: newTask.trim(),\n                }),\n              );\n              setNewTask('');\n            }}>\n            Submit\n          </button>\n        </div>\n      </div>\n      <ul>\n        {tasks.map(({ id, label }) => (\n          <li key={id}>\n            <span>{label}</span>\n            <button\n              onClick={() => {\n                setTasks(\n                  tasks.filter((task) => task.id !== id),\n                );\n              }}>\n              Delete\n            </button>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\n\n"
+      },
+      {
+        "name": "src/index.js",
+        "language": "javascript",
+        "content": "const root = ReactDOM.createRoot(document.getElementById('root'));\n  root.render(\n    <React.StrictMode>\n      <App />\n    </React.StrictMode>\n  );"
+      },
+      {
+        "name": "src/style.css",
+        "language": "css",
+        "content": "body {\n  font-family: sans-serif;\n}\n\n"
+      }
+    ],
+    "questionDetails": {
+      "name": "Todo List",
+      "questionaerInfo": {
+        "name": "YanghSun Tay",
+        "profilePic": "https://media.licdn.com/dms/image/v2/D5603AQFB72zuIqxYrQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1684230919345?e=1744848000&v=beta&t=k1XZNF3EGY4g8MbqRfgp6bGPxWYQdH5_9cRp73CWgu0",
+        "additionalInfo": "Ex-Meta Staff Engineer"
+      },
+      "techStack": ["html", "js", "react"],
+      "difficulty": "Medium",
+      "time": 20,
+      "questionDescription": "You're given some existing HTML for a Todo List app. Add the following functionality to the app:\n\nAdd new tasks on clicking the \"Submit\" button, \nThe <input> field should be cleared upon successful addition, \nRemove tasks from the Todo List upon clicking the \"Delete\" button.",
+      "requirements": [],
+      "notes": [
+        "The focus of this question is on functionality, not the styling. There's no need to write any custom CSS.",
+        "You may modify the markup (e.g. adding ids, data attributes, replacing some tags, etc), but the result should remain the same visually.",
+        "You may want to think about ways to improve the user experience of the application and implement them (you get bonus credit for doing that during interviews)."
+      ],
+      "companies": ["Apple", "Microsoft", "Twitter"],
+      "questionType": "ui"
+    }
+  },
+  {
+    "initialVanillaFiles": [
+      {
+        "name": "solution.js",
+        "language": "javascript",
+        "content": "// Please write your logic inside this function\nfunction findMaxConsecutiveOnes(nums) {\n\n}"
+      }
+    ],
+    "initialReactFiles": [],
+    "solutionVanillaFiles": [
+      {
+        "name": "solution.js",
+        "language": "javascript",
+        "content": "function findMaxConsecutiveOnes(nums) {\n  let maxCount = 0;\n  let currentCount = 0;\n\n  for (let num of nums) {\n    if (num === 1) {\n      currentCount++;\n      maxCount = Math.max(maxCount, currentCount);\n    } else {\n      currentCount = 0;\n    }\n  }\n\n  return maxCount;\n}"
+      }
+    ],
+    "solutionReactFiles": [],
+    "questionDetails": {
+      "name": "Max Consecutive Ones",
+      "questionaerInfo": {
+        "name": "YanghSun Tay",
+        "profilePic": "https://media.licdn.com/dms/image/v2/D5603AQFB72zuIqxYrQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1684230919345?e=1744848000&v=beta&t=k1XZNF3EGY4g8MbqRfgp6bGPxWYQdH5_9cRp73CWgu0",
+        "additionalInfo": "Ex-Meta Staff Engineer"
+      },
+      "techStack": ["js"],
+      "difficulty": "Easy",
+      "time": 20,
+      "questionDescription": "Given a binary array `nums`, return the maximum number of consecutive 1's in the array. For example, if `nums = [1,1,0,1,1,1]`, the output should be 3 because the longest sequence of 1s is of length 3.",
+      "requirements": [
+        "Write a function `findMaxConsecutiveOnes` that takes an array of numbers (containing only 0s and 1s) as input.",
+        "The function should return the length of the longest sequence of consecutive 1s."
+      ],
+      "notes": [
+        "The input array will only contain 0s and 1s.",
+        "The array length can be from 0 to 10^4.",
+        "You can assume the input is valid (no need to handle edge cases like non-binary values)."
+      ],
+      "companies": ["Google", "Microsoft", "Facebook", "Netflix"],
+      "questionType": "logical",
+      "testCases": [
+        {
+          "input": "[1,1,0,1,1,1]",
+          "output": 3,
+          "description": "Test case with multiple sequences of 1s, longest is 3."
+        },
+        {
+          "input": "[1,0,1,1,0,1]",
+          "output": 2,
+          "description": "Test case with alternating 0s and 1s, longest sequence is 2."
+        },
+        {
+          "input": "[0,0,0]",
+          "output": 0,
+          "description": "Test case with no 1s."
+        },
+        {
+          "input": "[1,1,1,1,1]",
+          "output": 5,
+          "description": "Test case with all 1s."
+        },
+        {
+          "input": "[]",
+          "output": 0,
+          "description": "Test case with empty array."
+        }
+      ]
+    }
+  }
+]
